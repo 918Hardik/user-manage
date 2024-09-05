@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('https://jsonplaceholder.typicode.com/users')
@@ -25,6 +26,10 @@ const UserList = () => {
     axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`)
       .then(() => setUsers(users.filter(user => user.id !== id)))
       .catch(error => console.error('Error deleting user:', error));
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/edit-user/${id}`);
   };
 
   return (
@@ -49,6 +54,7 @@ const UserList = () => {
           {users.map(user => (
             <li key={user.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
               <Link to={`/user/${user.id}`} style={{ marginRight: '10px' }}>{user.name}</Link> - {user.email} - {user.phone}
+              <button onClick={() => handleEdit(user.id)}>Edit</button>
               <button onClick={() => handleDelete(user.id)}>Delete</button>
             </li>
           ))}
